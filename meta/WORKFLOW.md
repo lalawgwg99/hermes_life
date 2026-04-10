@@ -33,7 +33,12 @@
 - 挑出重點移出 inbox/ 到正確資料夾
 - 修正實體頁 compiled truth
 
-## 6) 原則
+## 6) 混合模式（Hybrid）
+- 先讀 L0（brain repo），缺口才查外部
+- 外部資料先進 inbox 或 timeline，不直接改 compiled truth
+- 只有 L1/L0 來源才可更新結論
+
+## 7) 原則
 - Human edits always win
 - All facts need sources
 - Append-only timeline
