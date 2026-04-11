@@ -1,51 +1,147 @@
-# hermes_life brain repo
+# hermes_dreaming
 
-這是你的「知識腦」真相來源（Source of Truth）。
-規則很簡單：人類修改永遠優先；代理只補充、整理與追加證據。
+`hermes_dreaming` 是一個「給人與 AI 共用」的知識作業系統。
 
-This repo is the source of truth for the brain.
-Human edits always win. Agents only append evidence.
+它不是一般筆記 app，也不是聊天記錄備份。  
+它的目標是把你的工作資訊變成可持續更新、可追溯、可被 AI 正確讀寫的長期知識庫。
 
-## 一句話使用
-把新資訊丟進 inbox/ → 代理人整理 → timeline 留證據 → compiled truth 更新
+## 這個產品到底是什麼
 
-## 快速開始
-1. 把新資訊丟進 inbox/
-2. 代理人整理到正確分類（people/ companies/ ideas/...）
-3. 夜間 Dream Cycle 產生摘要與建議
+一句話：  
+`hermes_dreaming = Markdown 腦庫（真相來源） + 規則 + 自動化流程`
 
-## 核心設計
-- 上半部是 Compiled Truth：當前結論，可修正
-- 下半部是 Timeline：只追加，不回寫，保留證據軌跡
-- 每個新事實必須帶來源（source + confidence）
-- 代理人先讀再寫，避免覆蓋人類結論
+你可以把它理解為：
+
+- 一個 Git 管理的個人/團隊知識資料庫
+- 一套固定資料模型（結論層 + 證據層）
+- 一套代理可遵守的寫入規範（避免亂寫、覆蓋、幻覺）
+
+## 它解決什麼問題
+
+多數知識管理會卡在三件事：
+
+1. 資訊進得來，但長期找不到
+2. 有結論，但不知道證據來源
+3. AI 可以回答，但不能可靠地「累積記憶」
+
+`hermes_dreaming` 的解法：
+
+- `Compiled Truth` 放「目前結論」
+- `Timeline (append-only)` 放「證據事件流」
+- 每條新事實都要帶 `source`
+- 人類可直接編輯，且人類編輯永遠優先
+
+## 誰適合用
+
+- 要讓 AI 長期協作的人（創業者、投資、研究、BD、顧問）
+- 有大量人物/公司/會議資訊需要持續更新的人
+- 想要「可回溯」而不是「一次性摘要」的人
+
+## 核心原則（很重要）
+
+- Source of Truth 在這個 repo（L0）
 - Human edits always win
+- 先讀再寫（Read before write）
+- Timeline 只追加，不回寫
+- 沒來源不升級為結論
 
-## 混合模式（Hybrid）
-- L0：brain repo 是唯一真相來源
-- 外部資料只作「來源輸入」
-- 先讀 L0，缺口才查外部
-- 外部資料先進 inbox 或 timeline，不直接改 compiled truth
+## 你每天怎麼用
 
-## 資料夾結構
-- people/ 人物頁（一人一檔）
-- companies/ 公司頁（一公司一檔）
-- ideas/ 概念/論點（一概念一檔）
-- meetings/ 會議紀錄、逐字稿
-- media/ 文章/書/影片/Podcast 等素材
-- originals/ 原創想法與產出
-- inbox/ 未整理輸入
-- meta/ 規則、夢檔、系統設定
-- templates/ 統一格式模板
+1. 把新訊息放到 `inbox/`
+2. 整理到對應實體頁（`people/`、`companies/`、`ideas/`）
+3. 在 `Timeline` 追加事件與來源
+4. 有足夠證據才更新 `Compiled Truth`
+5. 跑驗證腳本後再提交
 
-## 重要規則
-- Compiled truth 在上，timeline append-only 在下
-- 每個新事實都要有來源（source + confidence）
-- 任何自動寫入都需可回溯、可撤銷
+```bash
+bash scripts/validate_brain.sh
+```
 
-## 導航（必讀）
-- meta/AGENT_RULES.md：代理讀寫規則
-- meta/WORKFLOW.md：日常流程（含混合模式）
-- meta/MIXED_MODE.md：混合模式完整設計
-- meta/TELEGRAM_INTAKE.md：手機端輸入規則
-- meta/SIMPLIFIED_MODE.md：一般使用者版本
+## 第一個實際流程（5 分鐘）
+
+假設你今天開完會拿到三個訊息：
+
+- Jordan 要從 A 公司轉去 B 公司
+- B 公司要在下季啟動新產品
+- 資訊來源是今天會議紀錄
+
+做法：
+
+1. 先把原始筆記丟進 `inbox/2026-04-11_jordan_update.md`
+2. 更新 `people/Jordan.md` 的 timeline（新增事件 + source）
+3. 更新 `companies/B.md` 的 timeline（新增產品規劃事件 + source）
+4. 若證據足夠，再更新對應頁的 `Compiled Truth`
+5. 執行驗證並 commit
+
+## 資料模型（你要遵守的格式）
+
+`people/`、`companies/`、`ideas/` 的頁面必須包含：
+
+1. YAML frontmatter
+2. `## Compiled Truth`
+3. `## Timeline (append-only)`
+4. Timeline 每一行都帶 `(source: ...)`
+
+範例：
+
+```md
+---
+type: company
+updated_at: 2026-04-11
+tags:
+  - ai
+  - infra
+---
+
+# Example Co
+
+## Compiled Truth
+- What it does: ...
+- Stage: ...
+
+## Timeline (append-only)
+- 2026-04-11 — Signed pilot with Acme. (source: meeting | Weekly Sync | 2026-04-11)
+```
+
+## 資料夾說明
+
+- `people/`：人物頁（一人一檔）
+- `companies/`：公司頁（一公司一檔）
+- `ideas/`：概念與論點
+- `meetings/`：會議紀錄/逐字稿
+- `media/`：文章/書/影片摘要
+- `originals/`：原創想法與輸出
+- `inbox/`：待整理輸入
+- `templates/`：模板
+- `meta/`：規則、流程、整合文件
+
+## 品質保證（Quality Gate）
+
+- 本地驗證：`bash scripts/validate_brain.sh`
+- CI 驗證：`.github/workflows/brain-guard.yml`
+
+目前會檢查：
+
+- frontmatter 是否完整（`type`、`updated_at`、`tags`）
+- `Compiled Truth`/`Timeline` 區塊是否存在
+- Timeline 條目是否帶 `source`
+
+## 和 gbrain 的關係
+
+- 這個 repo 是 L0（真相來源）
+- gbrain 是 L1（搜尋/向量檢索層）
+
+你可以先不用 gbrain，純 Markdown 也能運作。  
+當檔案量變大再接 gbrain。
+
+整合流程看這裡：
+
+- `meta/GBRAIN_INTEGRATION.md`
+
+## 重要文件（先看這些）
+
+- `meta/SIMPLIFIED_MODE.md`：最短使用方式
+- `meta/WORKFLOW.md`：日常流程
+- `meta/AGENT_RULES.md`：代理讀寫規範
+- `meta/MIXED_MODE.md`：混合模式（L0/L1）
+- `meta/MATURITY_ROADMAP.md`：成熟化路線圖
